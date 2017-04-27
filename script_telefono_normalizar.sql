@@ -23,6 +23,10 @@ PRINT 'Numero: '+ISNULL(@NUMERO, '')
 	--@NUMERO NVARCHAR(10) OUT,
 	--@CEL NVARCHAR(2) OUT
 
+
+
+-- Agregar control segun longitud de codigo de area
+-- Ej cod area tam 4 entonces resto del telefono longitud 6
 	
 	
 	DECLARE @A nvarchar(4), @AL int
@@ -55,6 +59,7 @@ PRINT 'Numero: '+ISNULL(@NUMERO, '')
 	
 	--Obtengo la longitud del telefono
 	set @longitudTelefono = LEN(@TXT)
+	
 	--IF @longitudTelefono < 6 RETURN 0;
 	
 	
