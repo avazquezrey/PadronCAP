@@ -18,8 +18,8 @@ from (
 		  ,CCM_PADRON.dbo.LEVDIS (@localidad,localidad) resultado
 
 	 from CCM_CPA.dbo.cpa_localidad
-	 --where 
-		--  provincia = 'B'
+	 where 
+		  provincia = 'B'
 	 )	 t
 order by t.resultado desc	 
 
