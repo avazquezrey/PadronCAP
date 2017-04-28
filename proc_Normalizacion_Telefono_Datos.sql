@@ -9,7 +9,21 @@ GO
 -- Create date: <18/04/2017>
 -- Description:	<Retorna el codigo de area, celular y numero de un numero de telefono>
 -- =============================================
-ALTER PROCEDURE [dbo].[proc_Numero_Telefono_Normalizar]
+/*
+declare @codigoArea NVARCHAR(4) ,
+	@numeroTelefono NVARCHAR(10) ,
+	@celular NVARCHAR(2) 
+	
+exec [proc_Normalizacion_Telefono_Datos] '1115-480 23983',@codigoArea output,@numeroTelefono output,@celular output
+select 
+ @codigoArea codigoArea
+ ,@numeroTelefono numeroTelefono
+ ,@celular celular
+
+*/ 
+
+-- 
+create PROCEDURE [dbo].[proc_Normalizacion_Telefono_Datos]
 	@numeroTelefonoRecibido nvarchar(50),
 	@codigoArea NVARCHAR(4) OUT,
 	@numeroTelefono NVARCHAR(10) OUT,
@@ -26,114 +40,8 @@ BEGIN
 			,@codigoAreaAux int
 			,@longitudTelefono int
 			,@telefono bigint
-	declare @codigoAreaS table (A int)
-	--------------------------------------------------------------
-	--Tabla con todos los codigos de area de Buenos Aires
-	insert @codigoAreaS values (11),
-							(220),
-							(221),
-							(223),
-							(237),
-							(291),
-							(2202),
-							(2221),
-							(2223),
-							(2224),
-							(2225),
-							(2226),
-							(2227),
-							(2229),
-							(2241),
-							(2242),
-							(2243),
-							(2244),
-							(2245),
-							(2246),
-							(2252),
-							(2254),
-							(2255),
-							(2257),
-							(2261),
-							(2262),
-							(2264),
-							(2265),
-							(2266),
-							(2267),
-							(2268),
-							(2271),
-							(2272),
-							(2273),
-							(2274),
-							(2281),
-							(2283),
-							(2284),
-							(2285),
-							(2286),
-							(2291),
-							(2292),
-							(2293),
-							(2296),
-							(2297),
-							(2314),
-							(2316),
-							(2317),
-							(2320),
-							(2322),
-							(2323),
-							(2324),
-							(2325),
-							(2326),
-							(2337),
-							(2342),
-							(2343),
-							(2344),
-							(2345),
-							(2346),
-							(2352),
-							(2353),
-							(2354),
-							(2355),
-							(2356),
-							(2357),
-							(2358),
-							(2362),
-							(2392),
-							(2393),
-							(2394),
-							(2395),
-							(2396),
-							(2473),
-							(2474),
-							(2475),
-							(2477),
-							(2478),
-							(2921),
-							(2922),
-							(2923),
-							(2924),
-							(2925),
-							(2926),
-							(2927),
-							(2928),
-							(2929),
-							(2932),
-							(2933),
-							(2935),
-							(2936),
-							(2982),
-							(2983),
-							(3327),
-							(3329),
-							(3388),
-							(3407),
-							(3461),
-							(3487),
-							(3488),
-							(3489)
-	
-	
-	
 			
+	
 	-- Saco el codigo de PAIS
 	set @numeroTelefonoRecibido = REPLACE(@numeroTelefonoRecibido,'+54','')
 	---------------------------------------------------------------
@@ -158,20 +66,23 @@ BEGIN
 	
 	
 	/*Verifico si el numero contiene el codigo de area*/						
-	set @variableControl = 1	
+	set @variableControl = 1
+		
 	--Seteo cortarTelefono en 4 para que tome los primeros 4 digitos del telefono
 	set @cortarTelefono = 4						
 	while (@variableControl = 1 AND @cortarTelefono > 1)
 	begin
-		set @codigoAreaAux = SUBSTRING(@telefono,1,@cortarTelefono)
-		select @codigoArea = A 
-		from @codigoAreaS
-		where A = @codigoAreaAux
+		set @codigoAreaAux = SUBSTRING(@numeroTelefonoRecibido,1,@cortarTelefono)
+		
+		select @codigoArea = codigo_area_sin_cero
+		from codigo_area_localidades
+		where
+		   codigo_area_sin_cero= @codigoAreaAux
 		
 		if @codigoArea is not null
 		begin 
 			set @variableControl = 0
-			set @numeroTelefonoRecibido = SUBSTRING(@numeroTelefonoRecibido,@cortarTelefono,@longitudTelefono)
+			set @numeroTelefonoRecibido = SUBSTRING(@numeroTelefonoRecibido,@cortarTelefono + 1,@longitudTelefono)
 		end
 		else
 		begin
