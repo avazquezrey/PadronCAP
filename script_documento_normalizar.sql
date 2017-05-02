@@ -8,11 +8,13 @@ set @nombreyapellido = 'MYRIN SVEA ARGENTINA'
 set @documento = 196486
 
 
+
 select 
   @nyapTabla = apyn
  ,@docTabla = doc 
 from CCM_Padron.dbo.padron2015
 where apyn like @nombreyapellido
+and doc = @documento
 
 
 select @docTabla 
@@ -34,3 +36,4 @@ begin
 	end	
 end
 */
+
