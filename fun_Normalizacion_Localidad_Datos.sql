@@ -9,7 +9,7 @@ begin
 declare @lodalidad_padron nvarchar(100)
 					
 select top 1 
-	 @lodalidad_padron = case when resultado>=60 then localidad else null end
+	 @lodalidad_padron = case when resultado>=80 then localidad else null end
 from (
 	 select 
 		  codloc
