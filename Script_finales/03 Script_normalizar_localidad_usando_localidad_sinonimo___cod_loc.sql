@@ -93,6 +93,7 @@ from PadronBeneficiariosCaja p
 -- 7) Actualizo el cod_loc en el CPA_Localidad x "localidad + codigo postal"
 
 /*
+	 -- Anulado porque el codigo postal en el excel, algunos estan mal cargados. Ej, para la plata esta 1900 y 101, entonces al 101 no le asigna el cod_loc
 	 update p	 --22014 --20053
 	 set codloc = l.codloc
 	 
@@ -105,9 +106,20 @@ from PadronBeneficiariosCaja p
 		  provincia='B'
 
 */
+	 
 
-
-
-
-select *
-from desar_06_cooperativa..PadronBeneficiariosCaja p 
+    update p	 --30276
+	 set codloc = l.codloc
+	 
+	 from desar_06_cooperativa..PadronBeneficiariosCaja p  --35386
+	 join ( select localidad,min(codloc) codloc
+			  from CCM_CPA..cpa_localidad 
+			  where
+				  provincia='B'
+			  group by localidad
+			  having count(1)=1
+			  
+			  )l on (p.localidad_sinonimo=l.localidad )
+   
+   
+   

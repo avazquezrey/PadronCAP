@@ -49,7 +49,7 @@ set @cont=0
 while exists(
 	select 1 from #PadronBeneficiariosCaja
 	where procesado=0
-	--and deshabilitado=0
+	
 )
 begin
 	set @cont=@cont+1
@@ -63,7 +63,7 @@ begin
 	 ,@Telefono=Telefono
 	from #PadronBeneficiariosCaja
 	where procesado=0
-	--and deshabilitado=0
+	
 	
 
 	exec dbo.proc_Normalizacion_Telefono_Datos
@@ -102,7 +102,7 @@ begin
 	and @Beneficio=Beneficio
 	and @Tipo_Doc=[Tipo Doc]
 	and @Numero_Documento=[Numero Documento]
-	--and deshabilitado=0
+	
 end	
 
 
@@ -148,4 +148,5 @@ join #PadronBeneficiariosCaja pt on po.Programa=pt.Programa and po.Beneficio=pt.
 
 select *
 from PadronBeneficiariosCaja
-
+where
+deshabilitado=0

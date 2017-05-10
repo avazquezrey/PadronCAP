@@ -3,7 +3,7 @@
 -- Se envia a buscar aquellas filas que: tengan telefono válido, no tienen codigo de area y no se encontró cod_loc
 ------------------------------------------------
 /*
---844
+--3365
 select 
 Programa
 ,Beneficio
@@ -13,16 +13,19 @@ Programa
 ,Item
 ,Jerarquia
 ,Domicilio
-,Localidad
+--,Localidad
+,localidad_sinonimo Localidad
 ,Telefono
 ,[Codigo Postal]
 
-
+--select distinct localidad_sinonimo
 from PadronBeneficiariosCaja
 where
 deshabilitado=0    --> te válido
-and a_verificar=1  --> no tiene código de área
+--and a_verificar=1  --> el te. no tiene código de área
 and codloc is null  --> no se encontro localidad en cpa segun sinonimo
+
+order by localidad_sinonimo
 */
 
 
