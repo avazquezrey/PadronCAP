@@ -42,15 +42,17 @@ set procesado=0
 --drop table #PadronBeneficiariosCaja
 ----------------------------------------------------
 
-declare @cont int
+declare @cont int, @error int
 
 set @cont=0
+set @error=0
 
 while exists(
 	select 1 from #PadronBeneficiariosCaja
-	where procesado=0
+	where procesado=0)
 	
-)
+	and @error=0
+	
 begin
 	set @cont=@cont+1
 	print 'entro nro: '+convert(varchar(300),@cont)
@@ -96,54 +98,71 @@ begin
 		,deshabilitado=case when @NUMERO is null then 1  -- Ej. nro de glew cargado 0224-436607 -> area 2244 y le falta un digito al nro entonces queda null.
 						else 0
 					  end 
+		,observacion =case when @NUMERO is null then 'Telefono inválido'  
+						else null
+					  end 			  
 		
+		
+		,telefono_full = case when @AREA is not null	and @NUMERO is not null	 
+												then dbo.fun_Normalizacion_Telefono_Full_Datos(@NUMERO,@AREA,@CEL)											  
+									 else null
+							end	
 	where procesado=0
 	and @Programa=Programa
 	and @Beneficio=Beneficio
 	and @Tipo_Doc=[Tipo Doc]
 	and @Numero_Documento=[Numero Documento]
 	
+	
+	if @@error <>0
+	begin
+		  set @error=1
+		  print 'error nro: '+convert(varchar(300),@cont)
+	end
+	
 end	
 
 
 
-	 
+if @error=0
+begin 
+	 update po
+	 set
+	 --Programa=pt.Programa
+	 --,Beneficio=pt.Beneficio
+	 --,[Tipo Doc]=pt.[Tipo Doc]
+	 --,[Numero Documento]=pt.[Numero Documento]
+	 --,[Apellido y Nombre]=pt.[Apellido y Nombre]
+	 --,Item=pt.Item
+	 --,Jerarquia=pt.Jerarquia
+	 --,Domicilio=pt.Domicilio
+	 --,Localidad=pt.Localidad
+	 --,Telefono=pt.Telefono
+	 --,[Codigo Postal]=pt.[Codigo Postal]
+	 codigo_area=pt.codigo_area
+	 ,codigo_area_aux=pt.codigo_area_aux
+	 ,prefijo_celular=pt.prefijo_celular
+	 ,nro_telefono=pt.nro_telefono
+	 ,deshabilitado=pt.deshabilitado
+	 ,ok=pt.ok
+	 ,a_verificar=pt.a_verificar
+	 ,telefono_full = pt.telefono_full
+	 --,telefono_full=pt.telefono_full
+	 --,locaidad_normalizada=pt.locaidad_normalizada
+	 --,COD_AREA_SUGERIDO=pt.COD_AREA_SUGERIDO
+	 --,locaidad_PADRON=pt.locaidad_PADRON
+	 --,locaidad_Sistema=pt.locaidad_Sistema
+	 --,locaidad_Mejorada=pt.locaidad_Mejorada
+	 --,locaidad_cpa=pt.locaidad_cpa
 
-update po
-set
-	--Programa=pt.Programa
-	--,Beneficio=pt.Beneficio
-	--,[Tipo Doc]=pt.[Tipo Doc]
-	--,[Numero Documento]=pt.[Numero Documento]
-	--,[Apellido y Nombre]=pt.[Apellido y Nombre]
-	--,Item=pt.Item
-	--,Jerarquia=pt.Jerarquia
-	--,Domicilio=pt.Domicilio
-	--,Localidad=pt.Localidad
-	--,Telefono=pt.Telefono
-	--,[Codigo Postal]=pt.[Codigo Postal]
-	codigo_area=pt.codigo_area
-	,codigo_area_aux=pt.codigo_area_aux
-	,prefijo_celular=pt.prefijo_celular
-	,nro_telefono=pt.nro_telefono
-	,deshabilitado=pt.deshabilitado
-	,ok=pt.ok
-	,a_verificar=pt.a_verificar
-	
-	--,telefono_full=pt.telefono_full
-	--,locaidad_normalizada=pt.locaidad_normalizada
-	--,COD_AREA_SUGERIDO=pt.COD_AREA_SUGERIDO
-	--,locaidad_PADRON=pt.locaidad_PADRON
-	--,locaidad_Sistema=pt.locaidad_Sistema
-	--,locaidad_Mejorada=pt.locaidad_Mejorada
-	--,locaidad_cpa=pt.locaidad_cpa
+	 from PadronBeneficiariosCaja po
+	 join #PadronBeneficiariosCaja pt on po.Programa=pt.Programa and po.Beneficio=pt.Beneficio and po.[Numero Documento]=pt.[Numero Documento]
 
-from PadronBeneficiariosCaja po
-join #PadronBeneficiariosCaja pt on po.Programa=pt.Programa and po.Beneficio=pt.Beneficio and po.[Numero Documento]=pt.[Numero Documento]
 
+end 
 ------------------------------------------------------
 
---drop table #PadronBeneficiariosCaja
+drop table #PadronBeneficiariosCaja
 
 
 select *

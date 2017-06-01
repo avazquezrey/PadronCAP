@@ -43,6 +43,9 @@ where
 s.id <> menor.menor_id		  
 */
 
+
+-- 3 bis) Normalizar via script algunas localidades que quedaron mal en el sinonimo
+
 -- 4)  Agregar campo a tabla PadronBeneficiariosCaja para insertar Localidad obtenida de los sinonimos.
 
 	 --alter table PadronBeneficiariosCaja
@@ -52,9 +55,9 @@ update p
 set localidad_sinonimo=null, codloc=null
 from PadronBeneficiariosCaja p
 */
+
 -- 5) Actualiza campo localidad_sinonimo cruzando por columna "localidad_excel"
 
-	 
 	 update p
 	 	  set localidad_sinonimo= s.localidad_valida
 	 
@@ -67,8 +70,8 @@ from PadronBeneficiariosCaja p
 	  
 	
 	 -- Actualiza las que tiene localidad =localidad_valida
-	/*
-	update p  --3720
+	
+	update p  --3611 --3720
 		  set localidad_sinonimo= s.localidad_valida
 
 	 from desar_06_cooperativa..PadronBeneficiariosCaja p  
@@ -82,7 +85,7 @@ from PadronBeneficiariosCaja p
 		 )s on (p.Localidad=s.localidad_valida)  
 	 where p.localidad_sinonimo is  null
 
-	 */
+	 
 
 
 
@@ -90,14 +93,20 @@ from PadronBeneficiariosCaja p
 	 --alter table PadronBeneficiariosCaja
 	 --add codloc int
 
+	 --alter table PadronBeneficiariosCaja
+	 --add Observacion varchar(1000)
+
 -- 7) Actualizo el cod_loc en el CPA_Localidad x "localidad + codigo postal"
 
-/*
-	 -- Anulado porque el codigo postal en el excel, algunos estan mal cargados. Ej, para la plata esta 1900 y 101, entonces al 101 no le asigna el cod_loc
-	 update p	 --22014 --20053
-	 set codloc = l.codloc
+
+	 -- Primer pasada para obtener codloc del cpa
+	 -- el codigo postal en el excel, algunos estan mal cargados. Ej, para la plata esta 1900 y 101, entonces al 101 no le asigna el cod_loc
 	 
-	 
+	 update p	 --22894 --22846      --22014 --20053
+	 set 
+		  codloc = l.codloc
+	     ,Observacion = '1- Localidad obtenida según nombre localidad y codigo postal recibido'
+	
 	 from desar_06_cooperativa..PadronBeneficiariosCaja p  --35386
 	 join CCM_CPA..cpa_localidad l on (p.localidad_sinonimo=l.localidad 
 												and p.[Codigo Postal]=l.cp)			-- Agrego codigo postal, porque hay localidades como las flores q existen para distintos partidos.
@@ -105,11 +114,13 @@ from PadronBeneficiariosCaja p
 	 where
 		  provincia='B'
 
-*/
-	 
 
-    update p	 --30276
+	 
+	 -- Segunda pasada con los que falta obtener codloc del cpa, solo por nombre de localidad
+ 
+    update p	 --9128 --9176       --30276
 	 set codloc = l.codloc
+	    ,Observacion = '2- Localidad obtenida según nombre localidad recibido'
 	 
 	 from desar_06_cooperativa..PadronBeneficiariosCaja p  --35386
 	 join ( select localidad,min(codloc) codloc
@@ -121,5 +132,6 @@ from PadronBeneficiariosCaja p
 			  
 			  )l on (p.localidad_sinonimo=l.localidad )
    
-   
+    where
+		  p.codloc is null
    

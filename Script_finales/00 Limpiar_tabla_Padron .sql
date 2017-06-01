@@ -1,6 +1,6 @@
 -- Limpiar campos anexos de normalizacion
 
---update p
+update p
 set 
 codigo_area = null
 ,codigo_area_aux = null
@@ -21,7 +21,16 @@ codigo_area = null
 ,Sexo= null
 ,localidad_sinonimo= null
 ,codloc = null
-
+,apellido_padron= null
+,nombre_padron= null
+,sexo_padron= null
+,doc_padron= null
+,clase_padron= null
+,codloc_padron= null
+,localidad_padron= null
+,domicilio_padron= null
+,con_datos_padron= null
+,observacion=null
 from PadronBeneficiariosCaja p
 
 
