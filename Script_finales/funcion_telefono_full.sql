@@ -1,6 +1,6 @@
 use Desar_06_Cooperativa
 go
-create function dbo.fun_Normalizacion_Telefono_Full_Datos
+alter function dbo.fun_Normalizacion_Telefono_Full_Datos
 
 (@numeroTelefono nvarchar(8)
 	,@codigoArea nvarchar(4)
@@ -19,7 +19,7 @@ and len(@numeroTelefono)>0
 and len(@codigoArea)>0
 begin	
   set @celular = isnull(@celular,'')
-  set @telefonoCompleto = '+549 '+ ltrim(rtrim(@codigoArea))+' '+ltrim(rtrim(@celular))+' '+ltrim(rtrim(@numeroTelefono))
+  set @telefonoCompleto = '+54 '+ ltrim(rtrim(@codigoArea))+' '+ltrim(rtrim(@celular))+' '+ltrim(rtrim(@numeroTelefono))
 end 
 
 return @telefonoCompleto
